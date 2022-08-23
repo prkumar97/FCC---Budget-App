@@ -121,28 +121,34 @@ class Category:
             return False
     
     def check_funds(self, amount):
-        if self.get_balance() > amount:
+        if self.get_balance() >= amount:
             return True
         else:
             return False
-
+    
+    # Format object to print
     def __str__(self):
-        i = 0
-        header = self.name.center(30, '*') + '\n'
-        for transaction in self.ledger:
-            line = transaction['description'][:23].ljust(23) + '\n'
-            i += 1
-            if i == len(self.ledger):
-                line = line[:-1]
-            # print(line)
-            header += line
+        receipt = self.name.center(30, '*') + '\n'
 
-        return header
+        for transaction in self.ledger:
+            item = transaction['description'][:23].ljust(23)
+            price = transaction['amount']
+
+            # Format prices to 2 decimals
+            price = '{:.2f}'.format(price)
+            price = price[:7].rjust(7)
+            item += price + '\n'
+
+            receipt += item
+        
+        # Add total
+        receipt += 'Total: ' + '{:.2f}'.format(self.get_balance())
+        return receipt
 
 
     
 food = Category('Food')
-food.deposit(12, 'savings1')
+food.deposit(12345, 'savings1')
 food.deposit(13, 'savings2')
 
 food.withdraw(1, 'withdraw test4567890123456789')
@@ -167,3 +173,4 @@ print(food.transfer(20, test))
 # print('new test ledger =', test.ledger)
 
 print(food)
+print(test)
