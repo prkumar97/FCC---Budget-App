@@ -145,32 +145,54 @@ class Category:
         receipt += 'Total: ' + '{:.2f}'.format(self.get_balance())
         return receipt
 
+def create_spend_chart(categories):
 
+    # Pull withdraws from categories
+    cost = [0] * len(categories)
+    i = 0
+    for category in categories:
+        for withdraw in category.ledger:
+            if withdraw['amount'] < 0:
+                cost[i] += withdraw['amount']
+        i += 1
     
-food = Category('Food')
-food.deposit(12345, 'savings1')
-food.deposit(13, 'savings2')
+    # Calculate percentages
+    total = sum(cost)
+    percent = [0] * len(cost)
+    i = 0
+    for category in cost:
+        # Round down to nearest 10
+        percent[i] = (cost[i] / total * 100) - (cost[i] / total * 100 % 10)
+        i += 1
 
-food.withdraw(1, 'withdraw test4567890123456789')
-food.withdraw(3, 'withdraw test2')
-# print('food ledger =', food.ledger)
+    # Create bar graph
+    graph = 'Percentage spent by category\n'
+    for y in range(100, -1, -10):
+        line = str(y).rjust(3) + '|'
+        for value in percent:
+            if value >= y:
+                line += ' o '
+            else:
+                line += '   '
+        graph += line + ' \n'
+    graph += '    ' + ('---' * (len(categories))) + '-\n'
 
-# print('food balance = ', food.get_balance())
+    # Label x-axis
+    # Find longest name
+    length = 0
+    for category in categories:
+        if len(category.name) > length:
+            length = len(category.name)
+    # Format letters
+    for x in range(0, length):
+        line = '    '
+        for category in categories:
+            if x < len(category.name):
+                line += ' ' + category.name[x] +' '
+            else:
+                line += '   '
+        graph += line + ' \n'
 
-
-test = Category('Test')
-test.deposit(20)
-# print('test ledger =', test.ledger)
-# print('test balance =', test.get_balance())
-
-# print('=================')
-# print('testing transfer method...')
-print(food.transfer(20, test))
-
-# print('new food balance =', food.get_balance())
-# print('new food ledger =', food.ledger)
-# print('new test balance =', test.get_balance())
-# print('new test ledger =', test.ledger)
-
-print(food)
-print(test)
+    graph = graph[:-1]
+    # print(graph)
+    return graph
