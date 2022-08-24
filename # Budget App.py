@@ -1,4 +1,6 @@
 # Budget App
+# Instructions found at:
+# https://www.freecodecamp.org/learn/scientific-computing-with-python/scientific-computing-with-python-projects/budget-app
 
 # - Complete the Category class in budget.py. It should be able to instantiate 
 #   objects based on different budget categories like food, clothing, and 
